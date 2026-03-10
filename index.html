@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>咕咕的测试局 - SCL-90 深度心理扫描</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #FDFBF7 0%, #FFF9E6 100%);
+            min-height: 100vh;
+            color: #333333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%);
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 4px 20px rgba(255, 184, 77, 0.3);
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 16px;
+            color: #333333;
+            line-height: 1.4;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #666666;
+            text-align: center;
+            line-height: 1.8;
+            margin-bottom: 32px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 18px 32px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%);
+            color: #333333;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(255, 184, 77, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 184, 77, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 4px 16px rgba(255, 184, 77, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 24px rgba(255, 184, 77, 0.6);
+            }
+        }
+
+        .progress-container {
+            margin-bottom: 32px;
+        }
+
+        .testing-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            color: #999999;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+        }
+
+        .btn-back:hover:not(:disabled) {
+            background: rgba(0, 0, 0, 0.05);
+            color: #666666;
+        }
+
+        .btn-back:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .back-icon {
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .back-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #E8E8E8;
+            border-radius: 4px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFE066 0%, #FFB84D 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+            color: #999999;
+            margin-top: 8px;
+        }
+
+        .question-card {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .question-number {
+            font-size: 14px;
+            color: #999999;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 22px;
+            font-weight: 500;
+            text-align: center;
+            color: #333333;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 16px 24px;
+            border: 2px solid #E8E8E8;
+            border-radius: 16px;
+            background: white;
+            color: #333333;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            border-color: #FFE066;
+            background: #FFF9E6;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.selected {
+            background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%);
+            border-color: transparent;
+            color: #333333;
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #E8E8E8;
+            border-top-color: #FFE066;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: #666666;
+            line-height: 1.8;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-label {
+            font-size: 14px;
+            color: #999999;
+            margin-top: 8px;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            margin: 24px 0;
+        }
+
+        .dimension-list {
+            margin-top: 24px;
+        }
+
+        .dimension-item {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #E8E8E8;
+        }
+
+        .dimension-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .dimension-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .dimension-score {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFB84D;
+        }
+
+        .dimension-desc {
+            font-size: 14px;
+            color: #666666;
+            line-height: 1.6;
+        }
+
+        .btn-share {
+            width: 100%;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #87CEEB 0%, #98D8C8 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 24px;
+            box-shadow: 0 4px 16px rgba(135, 206, 235, 0.4);
+        }
+
+        .btn-share:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(135, 206, 235, 0.5);
+        }
+
+        .poster-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .poster-container.active {
+            display: flex;
+        }
+
+        .poster-card {
+            background: linear-gradient(135deg, #FDFBF7 0%, #FFF9E6 100%);
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .poster-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .poster-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .poster-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 8px;
+        }
+
+        .poster-score {
+            font-size: 56px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin: 16px 0;
+        }
+
+        .poster-label {
+            font-size: 14px;
+            color: #666666;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .poster-tag {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 24px;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #87CEEB 0%, #98D8C8 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .poster-chart {
+            width: 100%;
+            height: 250px;
+            margin-bottom: 24px;
+        }
+
+        .poster-footer {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .poster-footer-text {
+            font-size: 12px;
+            color: #999999;
+            margin-bottom: 16px;
+        }
+
+        .poster-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333333;
+        }
+
+        .poster-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .poster-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .poster-btn-primary {
+            background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%);
+            color: #333333;
+        }
+
+        .poster-btn-secondary {
+            background: rgba(135, 206, 235, 0.2);
+            color: #87CEEB;
+        }
+
+        .disclaimer {
+            text-align: center;
+            font-size: 12px;
+            color: #999999;
+            margin-top: 32px;
+            padding: 16px;
+            line-height: 1.6;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-out {
+            animation: slideOut 0.3s ease-out forwards;
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.3s ease-out forwards;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-out-right {
+            animation: slideOutRight 0.3s ease-out forwards;
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+        }
+
+        @media (max-width: 380px) {
+            .title {
+                font-size: 20px;
+            }
+            
+            .question-text {
+                font-size: 20px;
+            }
+            
+            .option-btn {
+                padding: 14px 20px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="landing-view" class="view active">
+            <div class="card">
+                <div class="avatar">🐣</div>
+                <h1 class="title">咕咕的测试局<br>SCL-90 深度心理扫描</h1>
+                <p class="subtitle">咕咕博士准备了90个小问题，只需大约15分钟。这里是一个安全的树洞，请完全诚实地面对自己哦~</p>
+                <button class="btn-primary" onclick="startTest()">开始心理探索</button>
+            </div>
+        </div>
+
+        <div id="testing-view" class="view">
+            <div class="card">
+                <div class="testing-header">
+                    <button class="btn-back" id="btn-back" onclick="goBack()" disabled>
+                        <span class="back-icon">←</span>
+                        <span class="back-text">上一题</span>
+                    </button>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text">1/90</div>
+                    </div>
+                </div>
+
+                <div class="question-card" id="question-card">
+                    <div class="question-number" id="question-number">第 1 题</div>
+                    <div class="question-text" id="question-text">加载中...</div>
+                </div>
+
+                <div class="options-container" id="options-container">
+                    <button class="option-btn" data-value="1" onclick="selectOption(1)">1. 没有</button>
+                    <button class="option-btn" data-value="2" onclick="selectOption(2)">2. 很轻</button>
+                    <button class="option-btn" data-value="3" onclick="selectOption(3)">3. 中等</button>
+                    <button class="option-btn" data-value="4" onclick="selectOption(4)">4. 偏重</button>
+                    <button class="option-btn" data-value="5" onclick="selectOption(5)">5. 严重</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading-view" class="view">
+            <div class="card">
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">咕咕博士正在疯狂翻阅资料分析中...<br>请稍等片刻~</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-view" class="view">
+            <div class="card">
+                <div class="result-header">
+                    <div class="score-display" id="total-score">0</div>
+                    <div class="score-label" id="score-label">心理元气指数</div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="radar-chart"></canvas>
+                </div>
+
+                <div class="dimension-list" id="dimension-list">
+                </div>
+
+                <button class="btn-share" onclick="generateReport()">生成我的性格鉴定报告</button>
+
+                <div class="disclaimer">
+                    本测试结果仅供自我探索参考，不能替代专业医疗机构的临床诊断。
+                </div>
+            </div>
+        </div>
+
+        <div id="poster-container" class="poster-container">
+            <button class="poster-close" onclick="closePoster()">×</button>
+            <div class="poster-card" id="poster-card">
+                <div class="poster-header">
+                    <div class="poster-avatar">🐣</div>
+                    <div class="poster-title">咕咕的测试局</div>
+                    <div class="poster-label">SCL-90 深度心理扫描</div>
+                </div>
+                <div class="poster-score" id="poster-score">0</div>
+                <div class="poster-tag" id="poster-tag">元气满满</div>
+                <div class="poster-chart">
+                    <canvas id="poster-radar-chart"></canvas>
+                </div>
+                <div class="poster-footer">
+                    <div class="poster-footer-text">扫码或搜索「咕咕的测试局」</div>
+                    <div class="poster-actions">
+                        <button class="poster-btn poster-btn-secondary" onclick="closePoster()">关闭</button>
+                        <button class="poster-btn poster-btn-primary" onclick="downloadPoster()">保存图片</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script>
+        const questions = [
+            { id: 1, text: "头痛", dimension: "躯体化" },
+            { id: 2, text: "神经过敏，心中不踏实", dimension: "焦虑" },
+            { id: 3, text: "头脑中有不必要的想法或字句盘旋", dimension: "强迫症状" },
+            { id: 4, text: "头晕或晕倒", dimension: "躯体化" },
+            { id: 5, text: "对异性的兴趣减退", dimension: "抑郁" },
+            { id: 6, text: "对旁人责备求全", dimension: "人际关系敏感" },
+            { id: 7, text: "感到别人能控制您的思想", dimension: "精神病性" },
+            { id: 8, text: "责怪别人制造麻烦", dimension: "偏执" },
+            { id: 9, text: "忘性大", dimension: "强迫症状" },
+            { id: 10, text: "担心自己的衣饰整齐及仪态的端正", dimension: "强迫症状" },
+            { id: 11, text: "容易烦恼和激动", dimension: "敌对" },
+            { id: 12, text: "胸痛", dimension: "躯体化" },
+            { id: 13, text: "害怕空旷的场所或街道", dimension: "恐怖" },
+            { id: 14, text: "感到自己的精力下降，活动减慢", dimension: "抑郁" },
+            { id: 15, text: "想结束自己的生命", dimension: "抑郁" },
+            { id: 16, text: "听到旁人听不到的声音", dimension: "精神病性" },
+            { id: 17, text: "发抖", dimension: "焦虑" },
+            { id: 18, text: "感到大多数人都不可信", dimension: "偏执" },
+            { id: 19, text: "胃口不好", dimension: "其他" },
+            { id: 20, text: "容易哭泣", dimension: "抑郁" },
+            { id: 21, text: "同异性相处时感到害羞不自然", dimension: "人际关系敏感" },
+            { id: 22, text: "感到受骗，中了圈套或有人想抓住您", dimension: "抑郁" },
+            { id: 23, text: "无缘无故地突然感到害怕", dimension: "焦虑" },
+            { id: 24, text: "自己不能控制地大发脾气", dimension: "敌对" },
+            { id: 25, text: "怕单独出门", dimension: "恐怖" },
+            { id: 26, text: "经常责怪自己", dimension: "抑郁" },
+            { id: 27, text: "腰痛", dimension: "躯体化" },
+            { id: 28, text: "感到难以完成任务", dimension: "强迫症状" },
+            { id: 29, text: "感到孤独", dimension: "抑郁" },
+            { id: 30, text: "感到苦闷", dimension: "抑郁" },
+            { id: 31, text: "过分担忧", dimension: "抑郁" },
+            { id: 32, text: "对事物不感兴趣", dimension: "抑郁" },
+            { id: 33, text: "感到害怕", dimension: "焦虑" },
+            { id: 34, text: "您的感情容易受到伤害", dimension: "人际关系敏感" },
+            { id: 35, text: "旁人能知道您的私下想法", dimension: "精神病性" },
+            { id: 36, text: "感到别人不理解您、不同情您", dimension: "人际关系敏感" },
+            { id: 37, text: "感到人们对您不友好，不喜欢您", dimension: "人际关系敏感" },
+            { id: 38, text: "做事必须做得很慢以保证做得正确", dimension: "强迫症状" },
+            { id: 39, text: "心跳得很厉害", dimension: "焦虑" },
+            { id: 40, text: "恶心或胃部不舒服", dimension: "躯体化" },
+            { id: 41, text: "感到比不上他人", dimension: "人际关系敏感" },
+            { id: 42, text: "肌肉酸痛", dimension: "躯体化" },
+            { id: 43, text: "感到有人在监视您、谈论您", dimension: "偏执" },
+            { id: 44, text: "难以入睡", dimension: "其他" },
+            { id: 45, text: "做事必须反复检查", dimension: "强迫症状" },
+            { id: 46, text: "难以作出决定", dimension: "强迫症状" },
+            { id: 47, text: "怕乘电车、公共汽车、地铁或火车", dimension: "恐怖" },
+            { id: 48, text: "呼吸有困难", dimension: "躯体化" },
+            { id: 49, text: "阵阵发冷或发热", dimension: "躯体化" },
+            { id: 50, text: "因为感到害怕而避开某些东西、场合或活动", dimension: "恐怖" },
+            { id: 51, text: "脑子变空了", dimension: "强迫症状" },
+            { id: 52, text: "身体发麻或刺痛", dimension: "躯体化" },
+            { id: 53, text: "喉咙有梗塞感", dimension: "躯体化" },
+            { id: 54, text: "感到前途没有希望", dimension: "抑郁" },
+            { id: 55, text: "不能集中注意力", dimension: "强迫症状" },
+            { id: 56, text: "感到身体的某一部分软弱无力", dimension: "躯体化" },
+            { id: 57, text: "感到紧张或容易紧张", dimension: "焦虑" },
+            { id: 58, text: "感到手或脚发重", dimension: "躯体化" },
+            { id: 59, text: "想到死亡的事", dimension: "其他" },
+            { id: 60, text: "吃得太多", dimension: "其他" },
+            { id: 61, text: "当别人看着您或谈论您时感到不自在", dimension: "人际关系敏感" },
+            { id: 62, text: "有一些不属于您自己的想法", dimension: "精神病性" },
+            { id: 63, text: "有想打人或伤害他人的冲动", dimension: "敌对" },
+            { id: 64, text: "醒得太早", dimension: "其他" },
+            { id: 65, text: "必须反复洗手、点数目或触摸某些东西", dimension: "强迫症状" },
+            { id: 66, text: "睡得不稳，不深", dimension: "其他" },
+            { id: 67, text: "有想摔坏或破坏东西的冲动", dimension: "敌对" },
+            { id: 68, text: "有一些别人没有的想法或念头", dimension: "偏执" },
+            { id: 69, text: "感到对别人神经过敏", dimension: "人际关系敏感" },
+            { id: 70, text: "在商店或电影院等人多的地方感到不自在", dimension: "恐怖" },
+            { id: 71, text: "感到任何事情都很困难", dimension: "抑郁" },
+            { id: 72, text: "一阵阵恐惧或惊恐", dimension: "焦虑" },
+            { id: 73, text: "感到在公共场合吃东西很不舒服", dimension: "人际关系敏感" },
+            { id: 74, text: "经常与人争论", dimension: "敌对" },
+            { id: 75, text: "单独一人时神经很紧张", dimension: "恐怖" },
+            { id: 76, text: "别人对您的成绩没有作出恰当的评价", dimension: "偏执" },
+            { id: 77, text: "即使和别人在一起也感到孤单", dimension: "精神病性" },
+            { id: 78, text: "感到坐立不宁，心神不定", dimension: "焦虑" },
+            { id: 79, text: "感到自己没有什么价值", dimension: "抑郁" },
+            { id: 80, text: "感到熟悉的东西变成陌生或不象是真的", dimension: "精神病性" },
+            { id: 81, text: "大叫或摔东西", dimension: "敌对" },
+            { id: 82, text: "害怕会在公共场合晕倒", dimension: "恐怖" },
+            { id: 83, text: "感到别人想占您的便宜", dimension: "偏执" },
+            { id: 84, text: "为一些有关性的想法而苦恼", dimension: "精神病性" },
+            { id: 85, text: "您认为应该因为自己的过错而受到惩罚", dimension: "精神病性" },
+            { id: 86, text: "感到要赶快把事情做完", dimension: "焦虑" },
+            { id: 87, text: "感到自己的身体有严重问题", dimension: "精神病性" },
+            { id: 88, text: "从未感到和其他人很亲近", dimension: "精神病性" },
+            { id: 89, text: "感到有罪", dimension: "其他" },
+            { id: 90, text: "感到自己的脑子有毛病", dimension: "精神病性" }
+        ];
+
+        const dimensionDescriptions = {
+            "躯体化": "躯体舒适度",
+            "强迫症状": "思维松弛度",
+            "人际关系敏感": "社交钝感力",
+            "抑郁": "情绪明朗度",
+            "焦虑": "内心松弛感",
+            "敌对": "亲和包容度",
+            "恐怖": "心理安全感",
+            "偏执": "认知灵活性",
+            "精神病性": "现实连接感",
+            "其他": "生活规律度"
+        };
+
+        const positiveDimensions = {
+            "躯体舒适度": "你的身体状态",
+            "思维松弛度": "你的思维状态",
+            "社交钝感力": "你的社交状态",
+            "情绪明朗度": "你的情绪状态",
+            "内心松弛感": "你的内心状态",
+            "亲和包容度": "你的包容状态",
+            "心理安全感": "你的安全感状态",
+            "认知灵活性": "你的认知状态",
+            "现实连接感": "你的现实感状态",
+            "生活规律度": "你的生活状态"
+        };
+
+        const healingPrescriptions = {
+            "躯体舒适度": "最近身体有点紧绷呢，记得给自己安排一次舒服的按摩，或者泡个热水澡，让身体好好放松一下~",
+            "思维松弛度": "脑子里的小剧场有点多哦，试着深呼吸三次，告诉自己：'没关系，慢慢来'，允许自己偶尔发发呆~",
+            "社交钝感力": "你的社交雷达太灵敏啦，其实别人没那么关注你，大胆做自己就好啦！别人的看法没那么重要~",
+            "情绪明朗度": "情绪有点小阴天呢，没关系，允许自己难过一会儿。记得多晒晒太阳，吃点甜食，或者找朋友聊聊天~",
+            "内心松弛感": "心里的小弦绷得太紧啦，试着放下一些控制欲，相信事情会往好的方向发展，给自己多一点信任和耐心~",
+            "亲和包容度": "最近容易炸毛呢，这很正常！试着在生气前数三秒，或者暂时离开现场，给自己一点冷静时间~",
+            "心理安全感": "安全感有点不足哦，试着建立一个自己的安全空间，可以是物理上的小角落，也可以是心理上的避风港~",
+            "认知灵活性": "思维有点固化呢，试着换个角度看问题，或者尝试一些新鲜事物，给大脑一点新鲜刺激~",
+            "现实连接感": "有点游离在现实之外呢，试着多做一些接地气的事情，比如做饭、散步、和朋友面对面聊天~",
+            "生活规律度": "生活节奏有点乱呢，试着建立一个小小的日常仪式感，比如固定时间喝水、散步，让生活慢慢回归正轨~"
+        };
+
+        const scoreLabels = {
+            "90-100": "内心强大的六边形战士",
+            "80-89": "元气满满的小太阳",
+            "70-79": "温暖治愈的小天使",
+            "60-69": "需要充电的可爱宝宝",
+            "50-59": "需要咕咕博士抱抱的疲惫灵魂",
+            "0-49": "正在经历成长的勇敢者"
+        };
+
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let isTransitioning = false;
+        let vitalityScore = 0;
+        let scoreLabel = '';
+        let radarChartData = null;
+
+        function startTest() {
+            switchView('testing-view');
+            showQuestion();
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            const questionCard = document.getElementById('question-card');
+            
+            questionCard.classList.remove('slide-in', 'slide-in-right');
+            void questionCard.offsetWidth;
+            questionCard.classList.add('slide-in');
+
+            document.getElementById('question-number').textContent = `第 ${currentQuestionIndex + 1} 题`;
+            document.getElementById('question-text').textContent = question.text;
+            
+            updateProgress();
+            updateBackButton();
+            resetOptions();
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = `${currentQuestionIndex + 1}/${questions.length}`;
+        }
+
+        function updateBackButton() {
+            const btnBack = document.getElementById('btn-back');
+            btnBack.disabled = currentQuestionIndex === 0;
+        }
+
+        function resetOptions() {
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                btn.disabled = false;
+            });
+        }
+
+        function selectOption(value) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            const selectedBtn = document.querySelector(`.option-btn[data-value="${value}"]`);
+            selectedBtn.classList.add('selected');
+
+            answers.push({
+                questionId: questions[currentQuestionIndex].id,
+                value: value,
+                dimension: questions[currentQuestionIndex].dimension
+            });
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    showLoading();
+                }
+                
+                isTransitioning = false;
+            }, 300);
+        }
+
+        function goBack() {
+            if (isTransitioning || currentQuestionIndex === 0) return;
+            isTransitioning = true;
+
+            const questionCard = document.getElementById('question-card');
+            questionCard.classList.remove('slide-in', 'slide-in-right');
+            void questionCard.offsetWidth;
+            questionCard.classList.add('slide-out-right');
+
+            setTimeout(() => {
+                answers.pop();
+                currentQuestionIndex--;
+                
+                showQuestionWithAnimation('right');
+                
+                isTransitioning = false;
+            }, 300);
+        }
+
+        function showQuestionWithAnimation(direction) {
+            const question = questions[currentQuestionIndex];
+            const questionCard = document.getElementById('question-card');
+            
+            questionCard.classList.remove('slide-in', 'slide-in-right', 'slide-out', 'slide-out-right');
+            void questionCard.offsetWidth;
+            
+            if (direction === 'right') {
+                questionCard.classList.add('slide-in-right');
+            } else {
+                questionCard.classList.add('slide-in');
+            }
+
+            document.getElementById('question-number').textContent = `第 ${currentQuestionIndex + 1} 题`;
+            document.getElementById('question-text').textContent = question.text;
+            
+            updateProgress();
+            updateBackButton();
+            resetOptions();
+        }
+
+        function showLoading() {
+            switchView('loading-view');
+            
+            setTimeout(() => {
+                calculateResults();
+            }, 2000);
+        }
+
+        function calculateResults() {
+            const dimensionScores = {};
+            const dimensionCounts = {};
+
+            answers.forEach(answer => {
+                if (!dimensionScores[answer.dimension]) {
+                    dimensionScores[answer.dimension] = 0;
+                    dimensionCounts[answer.dimension] = 0;
+                }
+                dimensionScores[answer.dimension] += answer.value;
+                dimensionCounts[answer.dimension]++;
+            });
+
+            const totalScore = answers.reduce((sum, answer) => sum + answer.value, 0);
+            const averageScore = (totalScore / answers.length).toFixed(2);
+            
+            vitalityScore = Math.round(((5 - parseFloat(averageScore)) / 4) * 100);
+            
+            document.getElementById('total-score').textContent = vitalityScore;
+
+            scoreLabel = getScoreLabel(vitalityScore);
+            document.getElementById('score-label').textContent = scoreLabel;
+
+            radarChartData = {
+                labels: Object.keys(dimensionScores).map(dimension => dimensionDescriptions[dimension]),
+                data: Object.keys(dimensionScores).map(dimension => {
+                    const originalScore = dimensionScores[dimension] / dimensionCounts[dimension];
+                    return Math.round(((5 - originalScore) / 4) * 100);
+                })
+            };
+
+            const dimensionResults = Object.keys(dimensionScores).map(dimension => {
+                const originalScore = (dimensionScores[dimension] / dimensionCounts[dimension]).toFixed(2);
+                const positiveScore = Math.round(((5 - parseFloat(originalScore)) / 4) * 100);
+                const positiveName = dimensionDescriptions[dimension];
+                return {
+                    name: positiveName,
+                    score: positiveScore,
+                    originalScore: originalScore,
+                    description: healingPrescriptions[positiveName] || "保持良好的心态，继续关注自己的心理健康。"
+                };
+            }).sort((a, b) => a.score - b.score).slice(0, 2);
+
+            displayDimensions(dimensionResults);
+            drawRadarChart(radarChartData.labels, radarChartData.data);
+            
+            switchView('result-view');
+        }
+
+        function getScoreLabel(score) {
+            if (score >= 90) return scoreLabels["90-100"];
+            if (score >= 80) return scoreLabels["80-89"];
+            if (score >= 70) return scoreLabels["70-79"];
+            if (score >= 60) return scoreLabels["60-69"];
+            if (score >= 50) return scoreLabels["50-59"];
+            return scoreLabels["0-49"];
+        }
+
+        function displayDimensions(dimensions) {
+            const container = document.getElementById('dimension-list');
+            container.innerHTML = dimensions.map(d => `
+                <div class="dimension-item">
+                    <div class="dimension-header">
+                        <span class="dimension-name">咕咕博士的治愈处方：${d.name}</span>
+                        <span class="dimension-score">${d.score}分</span>
+                    </div>
+                    <p class="dimension-desc">${d.description}</p>
+                </div>
+            `).join('');
+        }
+
+        function drawRadarChart(labels, data) {
+            const ctx = document.getElementById('radar-chart').getContext('2d');
+            
+            const labelsWithScores = labels.map((label, index) => `${label}\n${data[index]}分`);
+            
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labelsWithScores,
+                    datasets: [{
+                        label: '心理元气指数',
+                        data: data,
+                        backgroundColor: 'rgba(255, 184, 77, 0.3)',
+                        borderColor: 'rgba(255, 184, 77, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(255, 184, 77, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(255, 184, 77, 1)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                font: {
+                                    size: 10
+                                },
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 11,
+                                    weight: '500'
+                                },
+                                color: '#666666'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label.split('\n')[0] + ': ' + context.raw + '分';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function shareResult() {
+            const score = document.getElementById('total-score').textContent;
+            const shareText = `我在咕咕的测试局完成了SCL-90心理扫描，心理健康指数是${score}分！你也来测测吧~`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '咕咕的测试局 - SCL-90 深度心理扫描',
+                    text: shareText,
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                alert('请截图保存结果，然后分享到小红书哦~');
+            }
+        }
+
+        function generateReport() {
+            document.getElementById('poster-score').textContent = vitalityScore;
+            document.getElementById('poster-tag').textContent = scoreLabel;
+            document.getElementById('poster-container').classList.add('active');
+            
+            setTimeout(() => {
+                drawPosterRadarChart();
+            }, 100);
+        }
+
+        function closePoster() {
+            document.getElementById('poster-container').classList.remove('active');
+        }
+
+        function drawPosterRadarChart() {
+            const ctx = document.getElementById('poster-radar-chart').getContext('2d');
+            
+            const labelsWithScores = radarChartData.labels.map((label, index) => `${label}\n${radarChartData.data[index]}分`);
+            
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labelsWithScores,
+                    datasets: [{
+                        label: '心理元气指数',
+                        data: radarChartData.data,
+                        backgroundColor: 'rgba(255, 184, 77, 0.3)',
+                        borderColor: 'rgba(255, 184, 77, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(255, 184, 77, 1)',
+                        pointBorderColor: '#fff',
+                        pointRadius: 3,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                font: {
+                                    size: 9
+                                },
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 10,
+                                    weight: '500'
+                                },
+                                color: '#666666'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function downloadPoster() {
+            const posterCard = document.getElementById('poster-card');
+            
+            html2canvas(posterCard, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#FDFBF7'
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = '咕咕的测试局-心理元气指数.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error('生成海报失败:', err);
+                alert('生成海报失败，请尝试截图保存~');
+            });
+        }
+    </script>
+</body>
+</html>
